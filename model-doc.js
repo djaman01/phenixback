@@ -7,9 +7,15 @@ const mongoose = require("mongoose");
 //En bref, on crée juste une structure = schema pour le document
 
 const contact = mongoose.Schema (
+  //Toujours mettre à jour l'api .post dans le file server.js
   {
     Nom: "String",
     Prenom: "String",
+    Ville: "String",
+    Mail: "String",
+    Telephone: "String",
+    Aide: "String",
+    //Toggle: "Boolean"
   },
   //The timestamps option is included, which automatically adds "createdAt" and "updatedAt" fields for document creation and modification timestamps.
   {

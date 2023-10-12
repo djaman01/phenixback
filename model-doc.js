@@ -18,7 +18,7 @@ const contact = mongoose.Schema (
 );
 
 //On va maintenant CREE ce modele dont on a fait la structure précedemment, grace à mongoose.model('nomCollection', variableName qui store la structure) et on le store dans la variable post
-const post = mongoose.model("newPhenix", contact);
+const post = mongoose.model("contactPhenix", contact);
 
 //La collection peut ne pas encore être crée sur mongoDB, elle se créera plus tard
 

@@ -6,7 +6,8 @@ const connectionParams = {
   useUnifiedTopology: true,
 };
 
-const uri = `mongodb+srv://jaafar:jaafar@cluster0.ff2excr.mongodb.net/?retryWrites=true&w=majority`
+//jaafar = user  2eme jaafar = mdp base de donnée et non site phenixData= non dataBase ou va s'envoyer les documents
+const uri = `mongodb+srv://jaafar:jaafar@cluster0.ff2excr.mongodb.net/phenixData?retryWrites=true&w=majority`
 
 // Connect to MongoDB
 const connexion = mongoose

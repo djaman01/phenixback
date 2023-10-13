@@ -13,7 +13,7 @@ const uri = `mongodb+srv://jaafar:jaafar@cluster0.ff2excr.mongodb.net/phenixData
 const connexion = mongoose
   .connect(uri, connectionParams)
   .then(() => {
-    console.log("Connected to MongoDB");
+    console.log("Connected to MongoDB");  
   })
   .catch((error) => {
     console.error("Error connecting to MongoDB:", error.message);

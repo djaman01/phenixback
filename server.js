@@ -40,7 +40,7 @@ app.post('/', async(req, res) =>{
     from: "phenix.deals@gmail.com",
     to: "phenix.deals@gmail.com",
     subject: "Contact Form phenixdeals.com",
-    text: `Nom: ${Nom} \n Prenom: ${Prenom}`
+    text: `Nom: ${Nom} \n Prenom: ${Prenom}\n Ville: ${Ville}\n Mail: ${Mail}\n Telephone: ${Telephone}\n Aide: ${Aide}\n News: ${Prenom}`
   }
   try{
     transporter.sendMail(mailOptions, function(error, info){

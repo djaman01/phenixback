@@ -21,11 +21,12 @@ app.get('/', (req, res) => {
   res.send('Hello World!')  
 })
 
+
 //Handling POST Requests to the Root URL ("/") after http://localhost:3005 S'il n'y a rien après 3005 (port qu'on a décidé plus haut) on met "/" 
 app.post('/', async(req, res) =>{
-  const {Nom, Prenom} = req.body //It extracts the "Nom" and "Prenom" from the request body using destructuring assignment.
+  const {Nom, Prenom, Ville, Mail, Telephone, Aide,  News} = req.body //It extracts the "Nom" and "Prenom" from the request body using destructuring assignment.
   try{
-      const newPost = await postModel.create({Nom, Prenom}); //It attempts to create a new document (record) in the MongoDB collection using the postModel.create() method. 
+      const newPost = await postModel.create({Nom, Prenom, Ville, Mail, Telephone, Aide, News}); //It attempts to create a new document (record) in the MongoDB collection using the postModel.create() method. 
       res.json(newPost)//If the document is successfully created, it responds with the newly created document in JSON format.
   }catch(error){
       res.status(500).send(error)

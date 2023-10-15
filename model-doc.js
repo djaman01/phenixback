@@ -10,6 +10,11 @@ const contact = mongoose.Schema (
   {
     Nom: "String",
     Prenom: "String",
+    Ville: "String",
+    Mail: "String",
+    Telephone: "String",
+    Aide: "String",
+    News: "String"
   },
   //The timestamps option is included, which automatically adds "createdAt" and "updatedAt" fields for document creation and modification timestamps.
   {

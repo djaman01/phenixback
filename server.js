@@ -5,8 +5,10 @@ const express = require('express') //It imports the Express.js library for build
 const app = express() //It creates an Express application instance called app
 const port = 3005 //It sets the port variable to 3005, which is the port number on which the server will listen.
 const db = require('./connect-db')
-const postModel = require('./model-doc')
+const {post, postProducts} = require('./model-doc')//on destructure les differnts models
 //npm i cors
+const multer = require('multer')
+const path = require('path')
 const cors = require('cors')
 app.use(cors())
 
@@ -19,8 +21,6 @@ const transporter = nodemailer.createTransport({ //Utilisation nodemailer
     pass: "ujgl seou tbpd bgpi"
   }
 })
-
-
 
 //This line configures the Express application to parse incoming JSON data from requests. This is necessary for processing JSON data sent in HTTP requests.
 app.use(express.json());
@@ -57,6 +57,56 @@ app.post('/', async(req, res) =>{
     }
     
 })
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage });
+
+app.post('/upload', upload.single('file'), async (req, res) => {
+  try {
+    // Replace backslashes with forward slashes in the file path
+    const imageUrl = req.file.path.replace(/\\/g, '/');
+
+    // Access the "name" field from the request body
+    const imageName = req.body.name;
+
+    // Save both the image URL and the image name in the database
+    const newImage = new postProducts({ imageUrl, Nom: imageName }); 
+    await newImage.save();
+
+    res.json({ imageUrl });
+  } catch (error) {
+    console.error('Error saving image to the database:', error);
+    res.status(500).json({ error: 'Unable to save image' });
+  }
+});
+
+
+app.get('/api/images', async (req, res) => {
+  try {
+    // const images = await postModel.find({}, 'imageUrl'); // Retrieve only the imageUrl field
+    const images = await postModel.find({}); // Retrieve only the imageUrl field
+
+    const imageUrls = images.map((image) => image.imageUrl);
+    res.json({ imageUrls });
+    console.log("here is the pics");
+  } catch (error) {
+    console.error('Error fetching images from the database:', error);
+    res.status(500).json({ error: 'Unable to fetch images' });
+  }
+});
+
+app.use(express.static('public'));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 //Starting the Server:
 //This code starts the Express server and listens on the specified port (3005 in this case). 

@@ -5,7 +5,7 @@ const express = require('express') //It imports the Express.js library for build
 const app = express() //It creates an Express application instance called app
 const port = 3005 //It sets the port variable to 3005, which is the port number on which the server will listen.
 const db = require('./connect-db')
-const {post, postProducts} = require('./model-doc')//on destructure les differnts models
+const {post, postProducts} = require('./model-doc')//on destructure les differnts models, si on avait que 1 model, on ecrit juste une variable normale
 //npm i cors
 const multer = require('multer')
 const path = require('path')
@@ -31,11 +31,9 @@ app.get('/', (req, res) => {
 })
 
 
-//Handling POST Requests to the Root URL ("/") after http://localhost:3005 S'il n'y a rien après 3005 (port qu'on a décidé plus haut) on met "/" 
-//On va définir ce qu'on va envoyer à la base de donnée MongoDB à parti du site
-
+//Handle route for Post request pour envoyer la data du contact vers la base de donnée MongoDB et le mail
 app.post('/', async(req, res) =>{
-  const {Nom, Prenom, Ville, Mail, Telephone, Aide,  News} = req.body //On veut envoyer Nom, Prenom...etc à mongoDB
+  const {Nom, Prenom, Ville, Mail, Telephone, Aide,  News} = req.body //On destructure l'objet de req.body qui vient du front-end pour pouvoir l'utiliser facilement"
   const mailOptions = { //On veut aussi envoyer le tout à phenix.deals@gmail.com
     from: "phenix.deals@gmail.com",
     to: "phenix.deals@gmail.com",
@@ -50,8 +48,21 @@ app.post('/', async(req, res) =>{
         console.log("mail sent:" + info.response)
       }
     });
-      const newPost = await postModel.create({Nom, Prenom, Ville, Mail, Telephone, Aide, News}); //It attempts to create a new document (record) in the MongoDB collection using the postModel.create() method. 
-      res.json(newPost)//If the document is successfully created, it responds with the newly created document in JSON format.
+      const newPost = await postContact.create({Nom, Prenom, Ville, Mail, Telephone, Aide, News});//Vu qu'on utilise le model nommé "post" on fait post.create({destructure l'object que la variable post store})
+      res.json(newPost)//Respond by creating a new document in json format if handle route success
+  }catch(error){
+      res.status(500).send(error)
+    }
+    
+})
+
+app.post('/addproduct', async(req, res) =>{
+  
+  const {nom, dimension, matiere, prix, code} = req.body 
+
+  try{
+      const newPost = await postProducts.create({nom, dimension, matiere, prix, code});
+      res.json(newPost)
   }catch(error){
       res.status(500).send(error)
     }

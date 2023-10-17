@@ -59,13 +59,42 @@ app.post('/', async(req, res) =>{
 })
 
 app.post('/addproduct', async (req, res) => {
-  const {nom, dimensions, matiere, prix, code, thumbnail} = req.body
+  const {nom, dimensions, matiere, prix, code} = req.body
 
  
   try {
-    const newProduct = await postProducts.create({nom, dimensions, matiere, prix, code, thumbnail});
+    const newProduct = await postProducts.create({nom, dimensions, matiere, prix, code});
 
     res.json({ newProduct });
+  } catch (error) {
+    console.error('Error saving image to the database:', error);
+    res.status(500).json({ error: 'Unable to save image' });
+  }
+});
+
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => { //prend fichier du folder uploads
+    cb(null, 'uploads/');
+  },
+  filename: (req, file, cb) => { //donne un nom unique à chaque fichier-image
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    cb(null, uniqueSuffix + path.extname(file.originalname));
+  },
+});
+
+const upload = multer({ storage: storage }); //utilise une instance de multer qu'on a crée et store dans variable upload
+
+app.post('/upload', upload.single('file'), async (req, res) => {
+  try {
+    // Replace backslashes with forward slashes in the file path
+    const thumbnail = req.file.path.replace(/\\/g, '/');
+
+    // Save both the image URL and the image name in the database
+    const newImage = new postProducts({ thumbnail }); 
+    await newImage.save();
+
+    res.json({ thumbnail });
   } catch (error) {
     console.error('Error saving image to the database:', error);
     res.status(500).json({ error: 'Unable to save image' });

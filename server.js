@@ -36,6 +36,7 @@ app.get('/', (req, res) => {
 
 app.post('/', async(req, res) =>{
   const {Nom, Prenom, Ville, Mail, Telephone, Aide,  News} = req.body //On veut envoyer Nom, Prenom...etc à mongoDB
+  
   const mailOptions = { //On veut aussi envoyer le tout à phenix.deals@gmail.com
     from: "phenix.deals@gmail.com",
     to: "phenix.deals@gmail.com",
@@ -58,46 +59,68 @@ app.post('/', async(req, res) =>{
     
 })
 
-app.post('/addproduct', async (req, res) => {
-  const {nom, dimensions, matiere, prix, code} = req.body
-
- 
-  try {
-    const newProduct = await postProducts.create({nom, dimensions, matiere, prix, code});
-
-    res.json({ newProduct });
-  } catch (error) {
-    console.error('Error saving image to the database:', error);
-    res.status(500).json({ error: 'Unable to save image' });
-  }
-});
-
-
 const storage = multer.diskStorage({
-  destination: (req, file, cb) => { //prend fichier du folder uploads
+  destination: (req, file, cb) => {
     cb(null, 'uploads/');
   },
-  filename: (req, file, cb) => { //donne un nom unique à chaque fichier-image
+  filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     cb(null, uniqueSuffix + path.extname(file.originalname));
   },
 });
 
-const upload = multer({ storage: storage }); //utilise une instance de multer qu'on a crée et store dans variable upload
+const upload = multer({ storage: storage });
 
+// app.post('/upload', upload.single('file'), async (req, res) => {
+//   const {nom, dimensions, matiere, prix, code} = req.body
+//   try {
+//     // Replace backslashes with forward slashes in the file path
+//     const imageUrl = req.file.path.replace(/\\/g, '/');
+
+//     // Access the "name" field from the request body
+//     // const imageName = req.body.name;
+    
+
+//     // Save both the image URL and the image name in the database
+//     const newImage = new postProducts({ imageUrl }); 
+//     await newImage.save();
+
+//     res.json({ imageUrl });
+//     const newPost = await post.create({nom});
+//     res.json(newPost)
+//   } catch (error) {
+//     console.error('Error saving image to the database:', error);
+//     res.status(500).json({ error: 'Unable to save image' });
+//   }
+// });
+
+// Route to handle image upload and product data storage
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
-    // Replace backslashes with forward slashes in the file path
-    const thumbnail = req.file.path.replace(/\\/g, '/');
+    // Access the uploaded file path
+    const imageUrl = req.file.path.replace(/\\/g, '/');
 
-    // Save both the image URL and the image name in the database
-    const newImage = new postProducts({ thumbnail }); 
-    await newImage.save();
+    // Extract product data from the request body
+    const { nom, dimensions, matiere, prix, code } = req.body;
 
-    res.json({ thumbnail });
+    // Create a new product using the Mongoose model and include the image URL
+    const newProduct = new postProducts({
+      nom,
+      imageUrl, // Include the image URL
+      dimensions,
+      matiere,
+      prix,
+      code,
+    });
+
+    // Save the product to the database
+    await newProduct.save();
+    // Respond with a success message or the newly created product
+    // res.json({ message: 'Image uploaded and product data stored successfully', product: newProduct });
+    res.json({imageUrl})
   } catch (error) {
-    console.error('Error saving image to the database:', error);
-    res.status(500).json({ error: 'Unable to save image' });
+    console.error('Error handling image upload and product data storage:', error);
+    res.status(500).json({ error: 'Unable to upload image and store product data' });
   }
 });
 
@@ -117,7 +140,7 @@ app.get('/api/images', async (req, res) => {
 });
 
 app.use(express.static('public'));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 //Starting the Server:
@@ -127,4 +150,3 @@ app.listen(port, () => {
 })
 
 // !!!!! Run: npx nodemon server.js to run the server automatically when we make a change
-

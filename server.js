@@ -5,7 +5,7 @@ const express = require('express') //It imports the Express.js library for build
 const app = express() //It creates an Express application instance called app
 const port = 3005 //It sets the port variable to 3005, which is the port number on which the server will listen.
 const db = require('./connect-db')
-const {post, postProducts} = require('./model-doc')//on destructure les differnts models, si on avait que 1 model, on ecrit juste une variable normale
+const {post, postProducts} = require('./model-doc')//on destructure les differnts models
 //npm i cors
 const multer = require('multer')
 const path = require('path')
@@ -31,9 +31,11 @@ app.get('/', (req, res) => {
 })
 
 
-//Handle route for Post request pour envoyer la data du contact vers la base de donnée MongoDB et le mail
+//Handling POST Requests to the Root URL ("/") after http://localhost:3005 S'il n'y a rien après 3005 (port qu'on a décidé plus haut) on met "/" 
+//On va définir ce qu'on va envoyer à la base de donnée MongoDB à parti du site
+
 app.post('/', async(req, res) =>{
-  const {Nom, Prenom, Ville, Mail, Telephone, Aide,  News} = req.body //On destructure l'objet de req.body qui vient du front-end pour pouvoir l'utiliser facilement"
+  const {Nom, Prenom, Ville, Mail, Telephone, Aide,  News} = req.body //On veut envoyer Nom, Prenom...etc à mongoDB
   const mailOptions = { //On veut aussi envoyer le tout à phenix.deals@gmail.com
     from: "phenix.deals@gmail.com",
     to: "phenix.deals@gmail.com",
@@ -48,52 +50,22 @@ app.post('/', async(req, res) =>{
         console.log("mail sent:" + info.response)
       }
     });
-      const newPost = await postContact.create({Nom, Prenom, Ville, Mail, Telephone, Aide, News});//Vu qu'on utilise le model nommé "post" on fait post.create({destructure l'object que la variable post store})
-      res.json(newPost)//Respond by creating a new document in json format if handle route success
+      const newPost = await post.create({Nom, Prenom, Ville, Mail, Telephone, Aide, News}); //It attempts to create a new document (record) in the MongoDB collection using the postModel.create() method. 
+      res.json(newPost)//If the document is successfully created, it responds with the newly created document in JSON format.
   }catch(error){
       res.status(500).send(error)
     }
     
 })
 
-app.post('/addproduct', async(req, res) =>{
-  
-  const {nom, dimensions, matiere, prix, code} = req.body 
+app.post('/addproduct', async (req, res) => {
+  const {nom, dimensions, matiere, prix, code, thumbnail} = req.body
 
-  try{
-      const newPost = await postProducts.create({nom, dimensions, matiere, prix, code});
-      res.json(newPost)
-  }catch(error){
-      res.status(500).send(error)
-    }
-    
-})
-
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  },
-});
-
-const upload = multer({ storage: storage });
-
-app.post('/upload', upload.single('file'), async (req, res) => {
+ 
   try {
-    // Replace backslashes with forward slashes in the file path
-    const imageUrl = req.file.path.replace(/\\/g, '/');
+    const newProduct = await postProducts.create({nom, dimensions, matiere, prix, code, thumbnail});
 
-    // Access the "name" field from the request body
-    const imageName = req.body.name;
-
-    // Save both the image URL and the image name in the database
-    const newImage = new postProducts({ imageUrl, Nom: imageName }); 
-    await newImage.save();
-
-    res.json({ imageUrl });
+    res.json({ newProduct });
   } catch (error) {
     console.error('Error saving image to the database:', error);
     res.status(500).json({ error: 'Unable to save image' });
@@ -116,7 +88,7 @@ app.get('/api/images', async (req, res) => {
 });
 
 app.use(express.static('public'));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 //Starting the Server:
@@ -126,3 +98,4 @@ app.listen(port, () => {
 })
 
 // !!!!! Run: npx nodemon server.js to run the server automatically when we make a change
+

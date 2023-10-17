@@ -58,10 +58,10 @@ app.post('/', async(req, res) =>{
 
 app.post('/addproduct', async(req, res) =>{
   
-  const {nom, dimension, matiere, prix, code} = req.body 
+  const {nom, dimensions, matiere, prix, code} = req.body 
 
   try{
-      const newPost = await postProducts.create({nom, dimension, matiere, prix, code});
+      const newPost = await postProducts.create({nom, dimensions, matiere, prix, code});
       res.json(newPost)
   }catch(error){
       res.status(500).send(error)

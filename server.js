@@ -71,29 +71,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// app.post('/upload', upload.single('file'), async (req, res) => {
-//   const {nom, dimensions, matiere, prix, code} = req.body
-//   try {
-//     // Replace backslashes with forward slashes in the file path
-//     const imageUrl = req.file.path.replace(/\\/g, '/');
-
-//     // Access the "name" field from the request body
-//     // const imageName = req.body.name;
-    
-
-//     // Save both the image URL and the image name in the database
-//     const newImage = new postProducts({ imageUrl }); 
-//     await newImage.save();
-
-//     res.json({ imageUrl });
-//     const newPost = await post.create({nom});
-//     res.json(newPost)
-//   } catch (error) {
-//     console.error('Error saving image to the database:', error);
-//     res.status(500).json({ error: 'Unable to save image' });
-//   }
-// });
-
 // Route to handle image upload and product data storage
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
@@ -101,10 +78,11 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const imageUrl = req.file.path.replace(/\\/g, '/');
 
     // Extract product data from the request body
-    const { nom, dimensions, matiere, prix, code } = req.body;
+    const { type, nom, dimensions, matiere, prix, code } = req.body;
 
     // Create a new product using the Mongoose model and include the image URL
     const newProduct = new postProducts({
+      type,
       nom,
       imageUrl, // Include the image URL
       dimensions,

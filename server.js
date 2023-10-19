@@ -31,9 +31,7 @@ app.get('/', (req, res) => {
 })
 
 
-//Handling POST Requests to the Root URL ("/") after http://localhost:3005 S'il n'y a rien après 3005 (port qu'on a décidé plus haut) on met "/" 
-//On va définir ce qu'on va envoyer à la base de donnée MongoDB à parti du site
-
+//Handling POST Request received by the server from the contact form in the browser, to send it's data to the MongoDb database and to my e-mail
 app.post('/', async(req, res) =>{
   const {Nom, Prenom, Ville, Mail, Telephone, Aide,  News} = req.body //On veut envoyer Nom, Prenom...etc à mongoDB
   
@@ -71,7 +69,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// Route to handle image upload and product data storage
+
+//Handling POST Request received by the server from the addProduct form in the browser, to send it's data (image+infos) to the MongoDb database
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
     // Access the uploaded file path
@@ -103,19 +102,36 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 });
 
 
-app.get('/api/images', async (req, res) => {
+app.get('/products', async (req, res) => {
   try {
-    // const images = await postModel.find({}, 'imageUrl'); // Retrieve only the imageUrl field
-    const images = await postModel.find({}); // Retrieve only the imageUrl field
+    const products = await postProducts.find(); // postProducts is the mongoos model
 
-    const imageUrls = images.map((image) => image.imageUrl);
-    res.json({ imageUrls });
-    console.log("here is the pics");
+    // Send the list of products as a JSON response
+    res.json(products);
   } catch (error) {
-    console.error('Error fetching images from the database:', error);
-    res.status(500).json({ error: 'Unable to fetch images' });
+    console.error('Error fetching products from the database:', error);
+    res.status(500).json({ error: 'Unable to fetch products' });
   }
 });
+
+
+
+
+
+// Handling GET Request received by the server from the front-end, to send back the data in the MongoDB database to the server
+// app.get('/api/images', async (req, res) => {
+//   try {
+//     const images = await postModel.find({}, 'imageUrl'); // Retrieve only the imageUrl field
+//     const images = await postModel.find({}); // Retrieve only the imageUrl field
+
+//     const imageUrls = images.map((image) => image.imageUrl);
+//     res.json({ imageUrls });
+//     console.log("here is the pics");
+//   } catch (error) {
+//     console.error('Error fetching images from the database:', error);
+//     res.status(500).json({ error: 'Unable to fetch images' });
+//   }
+// });
 
 app.use(express.static('public'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

@@ -142,6 +142,18 @@ app.get('/tableau', async (req, res) => {
   }
 });
 
+//Route Handler to GET only the products with type:"Decoration"
+app.get('/decoration', async (req, res) => {
+  try {
+    // Use Mongoose to query for "bijoux" products
+    const decoProducts = await postProducts.find({ type: 'Decoration' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"bijoux"
+
+    // Return the matching products as a JSON response
+    res.json(decoProducts);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 

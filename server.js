@@ -104,15 +104,19 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 
 app.get('/products', async (req, res) => {
   try {
-    const products = await postProducts.find(); // postProducts is the mongoos model
+    const products = await postProducts.find(); // postProducts est mon model
 
-    // Send the list of products as a JSON response
+    // j'envoie une liste de produit en json comme réponse à la requete GET
     res.json(products);
   } catch (error) {
     console.error('Error fetching products from the database:', error);
     res.status(500).json({ error: 'Unable to fetch products' });
   }
 });
+
+//Pour essayer de faire apparaitre les images
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 
 

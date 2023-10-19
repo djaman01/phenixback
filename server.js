@@ -116,10 +116,10 @@ app.get('/products', async (req, res) => {
 });
 
 //Route Handler to GET only the products with type:"Bijoux"
-app.get('/bijoux', async (req, res) => {
+app.get('/bijou', async (req, res) => {
   try {
     // Use Mongoose to query for "bijoux" products
-    const bijouxProducts = await postProducts.find({ type: 'Bijoux' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"bijoux"
+    const bijouxProducts = await postProducts.find({ type: 'Bijou' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"bijoux"
 
     // Return the matching products as a JSON response
     res.json(bijouxProducts);
@@ -127,28 +127,27 @@ app.get('/bijoux', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
-//Pour essayer de faire apparaitre les images
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
+
+//Route Handler to GET only the products with type:"Tableau"
+app.get('/tableau', async (req, res) => {
+  try {
+    // Use Mongoose to query for "bijoux" products
+    const tableauProducts = await postProducts.find({ type: 'Tableau' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"bijoux"
+
+    // Return the matching products as a JSON response
+    res.json(tableauProducts);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 
 
 
 
-// Handling GET Request received by the server from the front-end, to send back the data in the MongoDB database to the server
-// app.get('/api/images', async (req, res) => {
-//   try {
-//     const images = await postModel.find({}, 'imageUrl'); // Retrieve only the imageUrl field
-//     const images = await postModel.find({}); // Retrieve only the imageUrl field
 
-//     const imageUrls = images.map((image) => image.imageUrl);
-//     res.json({ imageUrls });
-//     console.log("here is the pics");
-//   } catch (error) {
-//     console.error('Error fetching images from the database:', error);
-//     res.status(500).json({ error: 'Unable to fetch images' });
-//   }
-// });
 
 app.use(express.static('public'));
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));

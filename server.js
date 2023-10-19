@@ -102,9 +102,10 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 });
 
 
+//Route Handler to GET all products
 app.get('/products', async (req, res) => {
   try {
-    const products = await postProducts.find(); // postProducts est mon model
+    const products = await postProducts.find(); // postProducts est mon model, postProducts.find()= ramène tout l'object postProducts
 
     // j'envoie une liste de produit en json comme réponse à la requete GET
     res.json(products);
@@ -114,6 +115,18 @@ app.get('/products', async (req, res) => {
   }
 });
 
+//Route Handler to GET only the products with type:"Bijoux"
+app.get('/bijoux', async (req, res) => {
+  try {
+    // Use Mongoose to query for "bijoux" products
+    const bijouxProducts = await postProducts.find({ type: 'Bijoux' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"bijoux"
+
+    // Return the matching products as a JSON response
+    res.json(bijouxProducts);
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 //Pour essayer de faire apparaitre les images
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 

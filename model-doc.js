@@ -25,6 +25,7 @@ const post = mongoose.model("contactPhenix", contact);
 //
 
 const products = mongoose.Schema (
+
   {
       type: "string",
       nom: "String",

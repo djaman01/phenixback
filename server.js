@@ -171,13 +171,16 @@ app.get('/livre', async (req, res) => {
 
 
 //Route Handler to GET only 1 product info when clicked so with: _id because it's unique
-app.get('/article', async (req, res) => {
+app.get('/article/:productId', async (req, res) => {
   try {
-    // Use Mongoose to query for "bijoux" products
-    const article = await postProducts.find({ type: 'Tableau' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"bijoux"
+    const productId = req.params.productId; //on utilise le endpoint de l'url grace a .params et on stock dans la variable productId
+    const product = await postProducts.findById(productId); //On utilise la methode .findById() pour trouver 1 produit
 
-    // Return the matching products as a JSON response
-    res.json(article);
+    if (product) {
+      res.json(product);
+    } else {
+      res.status(404).json({ error: 'Product not found' });
+    }
   } catch (error) {
     res.status(500).json({ error: 'Internal server error' });
   }

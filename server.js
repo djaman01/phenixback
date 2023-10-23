@@ -5,17 +5,17 @@ const express = require('express') //It imports the Express.js library for build
 const app = express() //It creates an Express application instance called app
 const port = 3005 //It sets the port variable to 3005, which is the port number on which the server will listen.
 const db = require('./connect-db')
-const {post, postProducts} = require('./model-doc')//on destructure les differnts models
+const { post, postProducts } = require('./model-doc')//on destructure les differnts models
 //npm i cors
 const multer = require('multer')
 const path = require('path')
 const cors = require('cors')
 app.use(cors())
 
-const nodemailer = require ('nodemailer'); //Pour envoyer le form au mail
+const nodemailer = require('nodemailer'); //Pour envoyer le form au mail
 
 const transporter = nodemailer.createTransport({ //Utilisation nodemailer
-  service:"gmail",
+  service: "gmail",
   auth: {
     user: "phenix.deals@gmail.com",
     pass: "ujgl seou tbpd bgpi"
@@ -27,34 +27,34 @@ app.use(express.json());
 
 //This code defines an HTTP GET route for the root URL ("/"). When a client accesses this URL, it sends a simple "Hello World!" message as a response.
 app.get('/', (req, res) => {
-  res.send('Hello World!')  
+  res.send('Hello World!')
 })
 
 
 //Handling POST Request received by the server from the contact form in the browser, to send it's data to the MongoDb database and to my e-mail
-app.post('/', async(req, res) =>{
-  const {Nom, Prenom, Ville, Mail, Telephone, Aide,  News} = req.body //On veut envoyer Nom, Prenom...etc à mongoDB
-  
+app.post('/', async (req, res) => {
+  const { Nom, Prenom, Ville, Mail, Telephone, Aide, News } = req.body //On veut envoyer Nom, Prenom...etc à mongoDB
+
   const mailOptions = { //On veut aussi envoyer le tout à phenix.deals@gmail.com
     from: "phenix.deals@gmail.com",
     to: "phenix.deals@gmail.com",
     subject: "Contact Form phenixdeals.com",
     text: `Nom: ${Nom} \n Prenom: ${Prenom}\n Ville: ${Ville}\n Mail: ${Mail}\n Telephone: ${Telephone}\n Aide: ${Aide}\n News: ${Prenom}`
   }
-  try{
-    transporter.sendMail(mailOptions, function(error, info){
-      if(error){
+  try {
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
         console.log(error);
-      } else{
+      } else {
         console.log("mail sent:" + info.response)
       }
     });
-      const newPost = await post.create({Nom, Prenom, Ville, Mail, Telephone, Aide, News}); //It attempts to create a new document (record) in the MongoDB collection using the postModel.create() method. 
-      res.json(newPost)//If the document is successfully created, it responds with the newly created document in JSON format.
-  }catch(error){
-      res.status(500).send(error)
-    }
-    
+    const newPost = await post.create({ Nom, Prenom, Ville, Mail, Telephone, Aide, News }); //It attempts to create a new document (record) in the MongoDB collection using the postModel.create() method. 
+    res.json(newPost)//If the document is successfully created, it responds with the newly created document in JSON format.
+  } catch (error) {
+    res.status(500).send(error)
+  }
+
 })
 
 const storage = multer.diskStorage({
@@ -76,7 +76,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     // Access the uploaded file path
     const imageUrl = req.file.path.replace(/\\/g, '/');
 
-    // Extract product data from the request body
+    // Extract product data by destructuring the object from the request body
     const { type, nom, dimensions, matiere, prix, code } = req.body;
 
     // Create a new product using the Mongoose model and include the image URL
@@ -94,7 +94,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     await newProduct.save();
     // Respond with a success message or the newly created product
     // res.json({ message: 'Image uploaded and product data stored successfully', product: newProduct });
-    res.json({imageUrl})
+    res.json({ imageUrl })
   } catch (error) {
     console.error('Error handling image upload and product data storage:', error);
     res.status(500).json({ error: 'Unable to upload image and store product data' });
@@ -102,7 +102,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
 });
 
 
-//Route Handler to GET all products
+//Route Handler to GET all products que j'utilise dans la catégorie Achat et aussi pour display les added products
 app.get('/products', async (req, res) => {
   try {
     const products = await postProducts.find(); // postProducts est mon model, postProducts.find()= ramène tout l'object postProducts
@@ -186,13 +186,29 @@ app.get('/article/:productId', async (req, res) => {
   }
 });
 
+//
+app.put('/products/:productId', async (req, res) => {
+  try {
+    const productId = req.params.productId; // Get the product ID from the URL parameter
+    const updatedProductData = req.body; // Get the updated product data from the request body
 
+    const updatedProduct = await postProducts.findByIdAndUpdate(productId, updatedProductData, { new: true });
+
+    if (updatedProduct) {
+      res.json(updatedProduct);
+    } else {
+      res.status(404).json({ error: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
 
 
 
 
 app.use(express.static('public'));
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 
 //Starting the Server:

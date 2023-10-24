@@ -206,6 +206,22 @@ app.put('/products/:productId', async (req, res) => {
   }
 });
 
+//Handles the DELETE Request
+app.delete('/products/:productId', async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const deletedProduct = await postProducts.findByIdAndRemove(productId);
+
+    if (deletedProduct) {
+      res.json({ message: 'Product deleted successfully', deletedProduct });
+    } else {
+      res.status(404).json({ error: 'Product not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 

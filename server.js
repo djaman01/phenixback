@@ -186,12 +186,14 @@ app.get('/article/:productId', async (req, res) => {
   }
 });
 
-//
+//Handles the Put Request
 app.put('/products/:productId', async (req, res) => {
   try {
     const productId = req.params.productId; // Get the product ID from the URL parameter
-    const updatedProductData = req.body; // Get the updated product data from the request body
+    const updatedProductData = req.body; // Get the updated product data from the request body qu'on va utiliser dans findByIdAndUpdate() mongoose method pour changer la value du produit
 
+  // Here we update the document in the MongoDB database using the findByIdAndUpdate() Mongoose method
+  //productId= Find the specific document we want to update / updateProducteData= la new data ecrite dans le browser / { new: true }: tells Mongoose to return the UPDATED document after the update operation.
     const updatedProduct = await postProducts.findByIdAndUpdate(productId, updatedProductData, { new: true });
 
     if (updatedProduct) {

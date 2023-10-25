@@ -28,7 +28,7 @@ const products = mongoose.Schema (
 
   {
       type: "string",
-      nom: "String",
+      nom: {type:"string", unique: true },
       imageUrl: "String",
       dimensions: "String",
       matiere: "String",
@@ -46,6 +46,25 @@ const products = mongoose.Schema (
 const postProducts = mongoose.model("productsPhenix", products);
 
 
-module.exports = {post, postProducts};
+//
+
+const login = mongoose.Schema({
+  user: {
+    type: String,
+    default: "Jaafar" // Set my default username here, so no need to post 'cause i'm the only admin
+  },
+  passeword: {
+    type: String,
+    default: "Mot2pass1" // Set my default password here, so no need to post 'cause i'm the only admin
+  }
+});
+
+//On va maintenant CREE ce modele dont on a fait la structure précedemment, dans une nouvelle collection qu'on crée ici ex: ContactPhenix
+//mongoose.model('nomCollection', variableName qui store la structure) et on le store dans la variable post
+const saveLogin = mongoose.model("logins", login);
+
+
+module.exports = {post, postProducts, saveLogin};
 //This code exports the contact schema stored dans la variable post
 // It means that other parts of your application will have access to the schema definition,
+

@@ -195,7 +195,6 @@ app.put('/products/:productId', async (req, res) => {
   // Here we update the document in the MongoDB database using the findByIdAndUpdate() Mongoose method
   //productId= Find the specific document we want to update / updateProducteData= la new data ecrite dans le browser / { new: true }: tells Mongoose to return the UPDATED document after the update operation.
     const updatedProduct = await postProducts.findByIdAndUpdate(productId, updatedProductData, { new: true });
-
     if (updatedProduct) {
       res.json(updatedProduct);
     } else {
@@ -235,4 +234,4 @@ app.listen(port, () => {
   console.log(`Example app listening ${port}`)
 })
 
-// !!!!! Run: npx nodemon server.js to run the server automatically when we make a change
+// !!!!! Run: npx nodemon server.js to run the server automatically when we make a changenpx nodemon server.js

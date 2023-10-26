@@ -5,11 +5,11 @@ const express = require('express') //It imports the Express.js library for build
 const app = express() //It creates an Express application instance called app
 const port = 3005 //It sets the port variable to 3005, which is the port number on which the server will listen.
 const db = require('./connect-db')
-const { post, postProducts } = require('./model-doc')//on destructure les differnts models
+const {post, postProducts, saveLogin} = require('./model-doc')//on destructure les differnts models
 //npm i cors
 const multer = require('multer')
 const path = require('path')
-const cors = require('cors')
+const cors = require('cors')    
 app.use(cors())
 
 const nodemailer = require('nodemailer'); //Pour envoyer le form au mail
@@ -100,6 +100,44 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     res.status(500).json({ error: 'Unable to upload image and store product data' });
   }
 });
+
+
+app.get("/login", async (req, res) => {
+  try {
+    const { user, password } = req.body;
+    // Create a new login document using the saveLogin model
+    const newLogin = new saveLogin({
+      user,
+      password,
+    })
+
+    // Save the new login document to the database
+    const savedLogin = await newLogin.save();
+
+    res.status(201).json(savedLogin);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Error creating login entry" });
+  }
+});
+
+
+// app.post("/login", async (req, res) => {
+//   const { user, password } = req.body;
+
+//   // Query the database to find a user with the provided user and password
+//   const foundUser = await saveLogin.findOne({ user, password });
+
+//   //Pas de.save car on ne veut pas enregistrer le document
+
+//   if (foundUser) {
+//     // User and password combination exists in the database
+//     res.status(200).json({ message: "Login successful" });
+//   } else {
+//     // User and password combination does not exist
+//     res.status(401).json({ message: "Invalid username or password" });
+//   }
+// });
 
 
 //Route Handler to GET all products que j'utilise dans la catégorie Achat et aussi pour display les added products

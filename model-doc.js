@@ -53,7 +53,7 @@ const login = mongoose.Schema({
     type: String,
     default: "Jaafar" // Set my default username here, so no need to post 'cause i'm the only admin
   },
-  passeword: {
+  password: {
     type: String,
     default: "Mot2pass1" // Set my default password here, so no need to post 'cause i'm the only admin
   }
@@ -61,7 +61,7 @@ const login = mongoose.Schema({
 
 //On va maintenant CREE ce modele dont on a fait la structure précedemment, dans une nouvelle collection qu'on crée ici ex: ContactPhenix
 //mongoose.model('nomCollection', variableName qui store la structure) et on le store dans la variable post
-const saveLogin = mongoose.model("logins", login);
+const saveLogin = mongoose.model("log", login);
 
 
 module.exports = {post, postProducts, saveLogin};

@@ -260,6 +260,18 @@ app.delete('/products/:productId', async (req, res) => {
 });
 
 
+//Route Handler to GET the last 20 products
+app.get('/lastproducts', async (req, res) => {
+  try {
+    const limit = parseInt(req.query.limit) || 20; // Get the 'limit' query parameter from the request or default to 20
+    const products = await postProducts.find().sort({ _id: -1 }).limit(limit); // Sort by _id in descending order to get the last 20 products
+
+    res.json(products);
+  } catch (error) {
+    console.error('Error fetching products from the database:', error);
+    res.status(500).json({ error: 'Unable to fetch products' });
+  }
+});
 
 
 app.use(express.static('public'));

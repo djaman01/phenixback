@@ -3,10 +3,9 @@
 //Importing Dependencies:
 const express = require('express') //It imports the Express.js library for building web applications.
 const app = express() //It creates an Express application instance called app
-const port = 3005 //It sets the port variable to 3005, which is the port number on which the server will listen.
+const port = 3005 //app.listen(port, ...) sets up the server to listen on that port. 
 const db = require('./connect-db')
 const {post, postProducts, saveLogin} = require('./model-doc')//on destructure les differnts models
-//npm i cors
 const multer = require('multer')
 const path = require('path')
 const cors = require('cors')    
@@ -57,6 +56,7 @@ app.post('/', async (req, res) => {
 
 })
 
+//Pour stocker les fichier images send par le front-end, dans le serveur
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/');
@@ -67,7 +67,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage: storage });
+const upload = multer({ storage: storage }); //Pour gérer les fichier télécharégs dans les routes express
 
 
 //Handling POST Request received by the server from the addProduct form in the browser, to send it's data (image+infos) to the MongoDb database
@@ -223,6 +223,21 @@ app.get('/article/:productId', async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+
+//Route Handler to GET Same products
+app.get('/same-product', async (req, res) => {
+  try {
+    const products = await postProducts.find(); 
+
+    res.json(products);  // j'envoie une liste de produit en json comme réponse à la requete GET
+  } 
+  catch (error) {
+    console.error('Error fetching products from the database:', error);
+    res.status(500).json({ error: 'Unable to fetch products' });
+  }
+});
+
 
 //Handles the Put Request
 app.put('/products/:productId', async (req, res) => {

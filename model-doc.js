@@ -28,7 +28,7 @@ const products = mongoose.Schema (
 
   {
       type: "string",
-      nom: {type:"string", unique: true },
+      nom:"string",
       imageUrl: "String",
       dimensions: "String",
       matiere: "String",

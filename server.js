@@ -225,19 +225,6 @@ app.get('/article/:productId', async (req, res) => {
 });
 
 
-//Route Handler to GET Same products
-app.get('/same-product', async (req, res) => {
-  try {
-    const products = await postProducts.find(); 
-
-    res.json(products);  // j'envoie une liste de produit en json comme réponse à la requete GET
-  } 
-  catch (error) {
-    console.error('Error fetching products from the database:', error);
-    res.status(500).json({ error: 'Unable to fetch products' });
-  }
-});
-
 
 //Handles the Put Request
 app.put('/products/:productId', async (req, res) => {
@@ -287,6 +274,23 @@ app.get('/lastproducts', async (req, res) => {
     res.status(500).json({ error: 'Unable to fetch products' });
   }
 });
+
+// Route Handler to GET related products by product name
+app.get('/related-products/:productName', async (req, res) => {
+  try {
+    const productName = req.params.productName;
+    const relatedProducts = await postProducts.find({ nom: productName });
+
+    if (relatedProducts) {
+      res.json(relatedProducts);
+    } else {
+      res.status(404).json({ error: 'Related products not found' });
+    }
+  } catch (error) {
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 
 
 app.use(express.static('public'));

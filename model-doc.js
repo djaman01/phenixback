@@ -24,27 +24,23 @@ const post = mongoose.model("contactPhenix", contact);
 
 //
 
-const products = mongoose.Schema (
-
+const products = mongoose.Schema(
   {
-      type: "string",
-      nom:"string",
-      imageUrl: "String",
-      dimensions: "String",
-      matiere: "String",
-      prix: "String",
-      code: "String"
+    type: "string",
+    nom: "string",
+    imageUrl: "string",
+    dimensions: "string",
+    matiere: "string",
+    prix: "string",
+    code: "string"
   },
-  //Adds "createdAt" and "updatedAt" fields for document creation and modification timestamps.
+
   {
     timestamps: true,
   }
 );
-
-//On va maintenant CREE ce modele dont on a fait la structure précedemment, dans une nouvelle collection qu'on crée ici ex: ContactPhenix
-//mongoose.model('nomCollection', variableName qui store la structure) et on le store dans la variable post
-const postProducts = mongoose.model("productsPhenix", products);
-
+//mongoose.model("collectionName", schema)
+const postProducts = mongoose.model('allProduct', products)
 
 //
 

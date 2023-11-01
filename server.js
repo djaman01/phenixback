@@ -2,16 +2,29 @@
 
 //Importing Dependencies:
 const express = require('express') //It imports the Express.js library for building web applications.
-const app = express() //It creates an Express application instance called app
+
 const port = 3005 //app.listen(port, ...) sets up the server to listen on that port. 
 const db = require('./connect-db')
-const {post, postProducts, saveLogin} = require('./model-doc')//on destructure les differnts models
+const {post, postProducts, saveLogin, userModel} = require('./model-doc')//on destructure les differnts models
 const multer = require('multer')
 const path = require('path')
-const cors = require('cors')    
-app.use(cors())
+const cors = require('cors')   
+
+//Imports for the login page
+const bcrypt = require('bcrypt')
+const jwt = require ('jsonwebtoken')
+const cookieParser = require('cookie-parser')
+
+const app = express() //It creates an Express application instance called app
+
+app.use(cors());//To access API inside our front-end
+app.use(express.json());//To convert=parse incoming JSON data from HTTP requests, to Json Objects easier to read for the server
+app.use(cookieParser());
+
+
 
 const nodemailer = require('nodemailer'); //Pour envoyer le form au mail
+
 
 const transporter = nodemailer.createTransport({ //Utilisation nodemailer
   service: "gmail",
@@ -21,8 +34,6 @@ const transporter = nodemailer.createTransport({ //Utilisation nodemailer
   }
 })
 
-//This line configures the Express application to parse incoming JSON data from requests. This is necessary for processing JSON data sent in HTTP requests.
-app.use(express.json());
 
 //This code defines an HTTP GET route for the root URL ("/"). When a client accesses this URL, it sends a simple "Hello World!" message as a response.
 app.get('/', (req, res) => {
@@ -32,7 +43,7 @@ app.get('/', (req, res) => {
 
 //Handling POST Request received by the server from the contact form in the browser, to send it's data to the MongoDb database and to my e-mail
 app.post('/', async (req, res) => {
-  const { Nom, Prenom, Ville, Mail, Telephone, Aide, News } = req.body //On veut envoyer Nom, Prenom...etc à mongoDB
+  const { Nom, Prenom, Ville, Mail, Telephone, Aide, News } = req.body //On DESTRUCTURE les property des objets, dont les values sont stocké dans les noms maintenant
 
   const mailOptions = { //On veut aussi envoyer le tout à phenix.deals@gmail.com
     from: "phenix.deals@gmail.com",
@@ -121,24 +132,18 @@ app.get("/login", async (req, res) => {
   }
 });
 
+//API = Route handler for LOGIN Registration
 
-// app.post("/login", async (req, res) => {
-//   const { user, password } = req.body;
-
-//   // Query the database to find a user with the provided user and password
-//   const foundUser = await saveLogin.findOne({ user, password });
-
-//   //Pas de.save car on ne veut pas enregistrer le document
-
-//   if (foundUser) {
-//     // User and password combination exists in the database
-//     res.status(200).json({ message: "Login successful" });
-//   } else {
-//     // User and password combination does not exist
-//     res.status(401).json({ message: "Invalid username or password" });
-//   }
-// });
-
+app.post('/register', (req, res) => {
+  const {name, email, password} = req.body;//destructure poru donner value properties objet à ces 3 noms
+  bcrypt.hash(password, 10)//Pour Cacher les values contenu dans password // 10 = facteur de cout qui va hash plsr fois le password pr sécurité
+  .then(hash => {
+    userModel.create({name, email, password: hash}) //password va etre caché
+    .then(user => res.json({status: "ok"}))
+    .catch(err => res.json(err))
+  })
+  .catch(err => res.json(err))
+})
 
 //Route Handler to GET all products que j'utilise dans la catégorie Achat et aussi pour display les added products
 app.get('/products', async (req, res) => {

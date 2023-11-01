@@ -55,12 +55,24 @@ const login = mongoose.Schema({
   }
 });
 
-//On va maintenant CREE ce modele dont on a fait la structure précedemment, dans une nouvelle collection qu'on crée ici ex: ContactPhenix
-//mongoose.model('nomCollection', variableName qui store la structure) et on le store dans la variable post
 const saveLogin = mongoose.model("log", login);
 
 
-module.exports = {post, postProducts, saveLogin};
+//Modèle for newlogin
+
+const userSchema = mongoose.Schema({
+    name: "String",
+    email: "String",
+    password: "String",
+    role: {
+      type: String,
+      default: "visitor"
+    }
+})
+
+const userModel = mongoose.model("users", userSchema)
+
+module.exports = {post, postProducts, saveLogin, userModel};
 //This code exports the contact schema stored dans la variable post
 // It means that other parts of your application will have access to the schema definition,
 

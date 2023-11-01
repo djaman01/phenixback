@@ -5,21 +5,31 @@ const express = require('express') //It imports the Express.js library for build
 
 const port = 3005 //app.listen(port, ...) sets up the server to listen on that port. 
 const db = require('./connect-db')
-const {post, postProducts, saveLogin, userModel} = require('./model-doc')//on destructure les differnts models
+const { post, postProducts, saveLogin, userModel } = require('./model-doc')//on destructure les differnts models
 const multer = require('multer')
 const path = require('path')
-const cors = require('cors')   
+const cors = require('cors')
 
 //Imports for the login page
 const bcrypt = require('bcrypt')
-const jwt = require ('jsonwebtoken')
+const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 
 const app = express() //It creates an Express application instance called app
 
-app.use(cors());//To access API inside our front-end
 app.use(express.json());//To convert=parse incoming JSON data from HTTP requests, to Json Objects easier to read for the server
+
+//Objectif: 1) Store le token dans le cookie en front-end side (on l'active grace à une ligne de code dans le component login.js)
+app.use(cors({
+  origin: ["http://localhost:3000"],//Local Host: to access the front-end side through this URL
+  methods: ["GET", "POST"],
+  credentials: true
+}));//To access API inside our front-end
+//2eme partie pour store cookie: res.cookie dans app.post('/register')
+
 app.use(cookieParser());
+
+
 
 
 
@@ -112,8 +122,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-
-app.get("/login", async (req, res) => {
+//1er login 
+app.get("/log", async (req, res) => {
   try {
     const { user, password } = req.body;
     // Create a new login document using the saveLogin model
@@ -135,15 +145,46 @@ app.get("/login", async (req, res) => {
 //API = Route handler for LOGIN Registration
 
 app.post('/register', (req, res) => {
-  const {name, email, password} = req.body;//destructure poru donner value properties objet à ces 3 noms
+  const { name, email, password } = req.body;//destructure pour donner value properties objet à ces 3 noms
   bcrypt.hash(password, 10)//Pour Cacher les values contenu dans password // 10 = facteur de cout qui va hash plsr fois le password pr sécurité
-  .then(hash => {
-    userModel.create({name, email, password: hash}) //password va etre caché
-    .then(user => res.json({status: "ok"}))
+    .then(hash => {
+      userModel.create({ name, email, password: hash }) //password va etre caché
+        .then(user => res.json("Success"))
+        .catch(err => res.json(err))
+    })
     .catch(err => res.json(err))
-  })
-  .catch(err => res.json(err))
 })
+
+// API= Router login page
+
+app.post('/login', (req, res) => {
+  const { email, password } = req.body;
+
+  userModel.findOne({email: email})
+  .then ( user => { //Si email est trouvé vérifie le password
+    if(user) {
+      bcrypt.compare(password, user.password, (err, response) => {
+        //Si response= password bon = genere 1 token avec module stored dans variable jwt / Si password mauvais répondre par 'The password is incorrect"
+        if(response) {
+            const token = jwt.sign({email: user.email, role: user.role},
+                  "jwt-secret-key", {expiresIn: "1d"})//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
+                  res.cookie('token', token)//2 suite) pour store le token dans le cookie res.cookie('name', value)
+                  return res.json({Status: "Success", role: user.role})
+        }
+        else { //si password faux, répond:
+          return res.json("Password incorrect")
+        }
+      })
+    }
+    else {
+      return res.json("email not found")
+    }
+  })
+
+  
+})
+
+
 
 //Route Handler to GET all products que j'utilise dans la catégorie Achat et aussi pour display les added products
 app.get('/products', async (req, res) => {
@@ -237,8 +278,8 @@ app.put('/products/:productId', async (req, res) => {
     const productId = req.params.productId; // Get the product ID from the URL parameter
     const updatedProductData = req.body; // Get the updated product data from the request body qu'on va utiliser dans findByIdAndUpdate() mongoose method pour changer la value du produit
 
-  // Here we update the document in the MongoDB database using the findByIdAndUpdate() Mongoose method
-  //productId= Find the specific document we want to update / updateProducteData= la new data ecrite dans le browser / { new: true }: tells Mongoose to return the UPDATED document after the update operation.
+    // Here we update the document in the MongoDB database using the findByIdAndUpdate() Mongoose method
+    //productId= Find the specific document we want to update / updateProducteData= la new data ecrite dans le browser / { new: true }: tells Mongoose to return the UPDATED document after the update operation.
     const updatedProduct = await postProducts.findByIdAndUpdate(productId, updatedProductData, { new: true });
     if (updatedProduct) {
       res.json(updatedProduct);

@@ -69,6 +69,7 @@ const userSchema = mongoose.Schema({
       default: "visitor"
     }
 })
+//role= le role de l'utilsateur / visitor par défaut ou admin par exemple 
 
 const userModel = mongoose.model("users", userSchema)
 

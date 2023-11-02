@@ -34,6 +34,7 @@ app.use(cookieParser());
 
 
 const nodemailer = require('nodemailer'); //Pour envoyer le form au mail
+const { verify } = require('crypto')
 
 
 const transporter = nodemailer.createTransport({ //Utilisation nodemailer
@@ -180,10 +181,35 @@ app.post('/login', (req, res) => {
       return res.json("email not found")
     }
   })
-
-  
 })
 
+//middleware to verify the token et crée une protected route pour accéder au Dashboard = plus de sécurité avant la réponse
+
+const verifyUser = (req, res, next) => {
+  const token = req.cookies.token; //c'est le token qu'on a stocké dans le cookie
+  if(!token) { //si on ne trouve pas de
+    return res.json("Token is missing")
+  }
+  else { //si le token est présent, on vérifie s'il est Bon/validé ou pas
+    jwt.verify(token, 'jwt-secret-key', (err, decoded) => { //decoded = value de jwt.sign qui constitue les données du token (ici c'est email and role)
+      if(err) {
+        return res.json ("Error with token")
+      }
+      else { //Si pas d'erreur avec le token
+        if(decoded.role === "admin") {
+              next() //Active la middleware et autorise la poursuite de la requete pour avoir une réponse
+        }
+        else {
+          return res.json("not admin")
+        }
+      }
+    })
+  }
+}
+
+app.get('/dashboard', verifyUser, (req, res) => {
+  res.json("Success", )
+})
 
 
 //Route Handler to GET all products que j'utilise dans la catégorie Achat et aussi pour display les added products

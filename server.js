@@ -10,6 +10,9 @@ const multer = require('multer')
 const path = require('path')
 const cors = require('cors')
 
+const fs = require('fs');
+
+
 //Imports for the login page
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
@@ -29,8 +32,23 @@ app.use(cors({
 
 app.use(cookieParser());
 
+//------------------------------------------------------
 
+//Code pour ajouter plusieurs file en 1 fois lorsqu'on active le serveur: A commenter une fois tous les files envoyés
 
+// const jsonData = fs.readFileSync('all-data.json', 'utf8');
+// const alldata = JSON.parse(jsonData);
+
+// //Insert data into the database
+// postProducts.insertMany(alldata)
+//   .then(function (models) {
+//     console.log(models);
+//   })
+//   .catch(function (err) {
+//     console.log(err);
+//   });
+
+//--------------------------------------------------------
 
 
 const nodemailer = require('nodemailer'); //Pour envoyer le form au mail

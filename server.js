@@ -48,7 +48,7 @@ app.use(cookieParser());
 //     console.log(err);
 //   });
 
-//--------------------------------------------------------
+//------------------------------------------------------
 
 
 const nodemailer = require('nodemailer'); //Pour envoyer le form au mail
@@ -365,11 +365,11 @@ app.get('/lastproducts', async (req, res) => {
   }
 });
 
-// Route Handler to GET related products by product name
+// Route Handler to GET related products by product name / response.data.nom = :productname
 app.get('/related-products/:productName', async (req, res) => {
   try {
-    const productName = req.params.productName;
-    const relatedProducts = await postProducts.find({ nom: productName });
+    const productName = req.params.productName; //On capte le product name et on le store dans uen variable
+    const relatedProducts = await postProducts.find({ nom: productName }); //On find ce productname
 
     if (relatedProducts) {
       res.json(relatedProducts);

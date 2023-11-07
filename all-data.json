@@ -27,5 +27,64 @@
     "matiere": "Bois",
     "prix": "700Dhs",
     "code": "785"
+  },
+  {
+    "type": "Tableau",
+    "nom": "Benjkan Salah",
+    "imageUrl": "../uploads/un.jpg",
+    "dimensions": "100x80cm",
+    "matiere": "Toile",
+    "prix": "10.000 DHS",
+    "code": "585"
+  },
+
+  {
+    "type": "Bijou",
+    "nom": "Montre",
+    "imageUrl": "../uploads/deux.jpg",
+    "dimensions": "/",
+    "matiere": "/",
+    "prix": "1250 Dhs",
+    "code": "D545"
+  },
+
+  {
+    "type": "Décoration",
+    "nom": "Table",
+    "imageUrl": "../uploads/trois.jpg",
+    "dimensions": "20X50Cm",
+    "matiere": "Bois",
+    "prix": "700Dhs",
+    "code": "785"
+  },
+  {
+    "type": "Tableau",
+    "nom": "Benjkan Salah",
+    "imageUrl": "../uploads/un.jpg",
+    "dimensions": "100x80cm",
+    "matiere": "Toile",
+    "prix": "10.000 DHS",
+    "code": "585"
+  },
+
+  {
+    "type": "Bijou",
+    "nom": "Montre",
+    "imageUrl": "../uploads/deux.jpg",
+    "dimensions": "/",
+    "matiere": "/",
+    "prix": "1250 Dhs",
+    "code": "D545"
+  },
+
+  {
+    "type": "Décoration",
+    "nom": "Table",
+    "imageUrl": "../uploads/trois.jpg",
+    "dimensions": "20X50Cm",
+    "matiere": "Bois",
+    "prix": "700Dhs",
+    "code": "785"
   }
+
 ]

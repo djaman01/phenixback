@@ -27,14 +27,15 @@ app.use(cors({
   origin: ["http://localhost:3000"],//Local Host: to access the front-end side through this URL
   methods: ["GET", "POST", "PUT", "DELETE"],//
   credentials: true
-}));//To access API inside our front-end
+}))
+//To access API inside our front-end
 //2eme partie pour store cookie: res.cookie dans app.post('/register')
 
 app.use(cookieParser());
 
 //------------------------------------------------------
 
-//Code pour ajouter plusieurs file en 1 fois lorsqu'on active le serveur: A commenter une fois tous les files envoyés
+// //Code pour ajouter plusieurs file en 1 fois lorsqu'on active le serveur: A commenter une fois tous les files envoyés
 
 // const jsonData = fs.readFileSync('all-data.json', 'utf8');
 // const alldata = JSON.parse(jsonData);

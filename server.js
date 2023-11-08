@@ -35,7 +35,7 @@ app.use(cookieParser());
 
 //------------------------------------------------------
 
-// //Code pour ajouter plusieurs file en 1 fois lorsqu'on active le serveur: A commenter une fois tous les files envoyés
+//Code pour ajouter plusieurs file en 1 fois lorsqu'on active le serveur: A commenter une fois tous les files envoyés
 
 // const jsonData = fs.readFileSync('all-data.json', 'utf8');
 // const alldata = JSON.parse(jsonData);
@@ -118,15 +118,15 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     const imageUrl = req.file.path.replace(/\\/g, '/');
 
     // Extract product data by destructuring the object from the request body
-    const { type, nom, dimensions, matiere, prix, code } = req.body;
+    const { type, auteur, infoProduit, etat, prix, code } = req.body;
 
     // Create a new product using the Mongoose model and include the image URL
     const newProduct = new postProducts({
       type,
-      nom,
+      auteur,
       imageUrl, // Include the image URL
-      dimensions,
-      matiere,
+      infoProduit, 
+      etat,
       prix,
       code,
     });

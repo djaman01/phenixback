@@ -27,11 +27,11 @@ const post = mongoose.model("contactPhenix", contact);
 const products = mongoose.Schema(
   {
     type: "string",
-    nom: "string",
     imageUrl: "string",
-    dimensions: "string",
-    matiere: "string",
+    infoProduit: "string",
+    auteur: "string",
     prix: "string",
+    etat: "string",
     code: "string"
   },
 

@@ -49,7 +49,7 @@ app.use(cookieParser());
 //     console.log(err);
 //   });
 
-//------------------------------------------------------
+//-------------------------------------------------------
 
 
 const nodemailer = require('nodemailer'); //Pour envoyer le form au mail
@@ -275,7 +275,7 @@ app.get('/tableau', async (req, res) => {
 app.get('/decoration', async (req, res) => {
   try {
     // Use Mongoose to query for "bijoux" products
-    const decoProducts = await postProducts.find({ type: 'Decoration' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"bijoux"
+    const decoProducts = await postProducts.find({ type: 'Décoration' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"bijoux"
 
     // Return the matching products as a JSON response
     res.json(decoProducts);

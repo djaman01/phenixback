@@ -370,7 +370,7 @@ app.get('/lastproducts', async (req, res) => {
 app.get('/related-products/:productName', async (req, res) => {
   try {
     const productName = req.params.productName; //On capte le product name et on le store dans uen variable
-    const relatedProducts = await postProducts.find({ nom: productName }); //On find ce productname
+    const relatedProducts = await postProducts.find({ auteur: productName }); //On find ce productname
 
     if (relatedProducts) {
       res.json(relatedProducts);
@@ -394,4 +394,3 @@ app.listen(port, () => {
   console.log(`Example app listening ${port}`)
 })
 
-// !!!!! Run: npx nodemon server.js to run the server automatically when we make a changenpx nodemon server.js

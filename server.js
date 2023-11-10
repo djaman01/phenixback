@@ -226,15 +226,16 @@ const verifyUser = (req, res, next) => {
   }
 }
 
-//2 Protected Routes pour accéder à la pgae dashboard et addProducts / Ne s'ouvre que si loggedIn = 1 token stocké dans cookies = régler pour s'expirer après 1h
+//2 Protected Routes pour accéder à les pages avec routes /dashboard et /addProduct 
+//Ne s'ouvre que si loggedIn et donc = 1 token stocké dans cookies (régler pour s'expirer après 1h de connexion)
+
 app.get('/dashboard', verifyUser, (req, res) => {
   res.json("Success")
 })
 
-app.get('/toaddproducts', verifyUser, (req, res) => {
-  res.json("success")
+app.get('/addProduct', verifyUser, (req, res) => {
+  res.json("Success")
 })
-
 
 //Route Handler to GET all products que j'utilise dans la catégorie Achat et aussi pour display les added products
 app.get('/products', async (req, res) => {

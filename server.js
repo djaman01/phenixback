@@ -18,7 +18,7 @@ const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 
-const app = express() //It creates an Express application instance called app
+const app = express() //It creates an Express application instance called app, tu easily create API
 
 app.use(express.json());//To convert=parse incoming JSON data from HTTP requests, to Json Objects easier to read for the server
 
@@ -187,7 +187,7 @@ app.post('/login', (req, res) => {
         //Si response= password bon = genere 1 token avec module stored dans variable jwt / Si password mauvais répondre par 'The password is incorrect"
         if(response) {
             const token = jwt.sign({email: user.email, role: user.role},
-                  "jwt-secret-key", {expiresIn: "1d"})//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
+                  "jwt-secret-key", {expiresIn: "1h"})//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
                   res.cookie('token', token)//2 suite) pour store le token dans le cookie res.cookie('name', value)
                   return res.json({Status: "Success", role: user.role})
         }
@@ -226,8 +226,13 @@ const verifyUser = (req, res, next) => {
   }
 }
 
+//2 Protected Routes pour accéder à la pgae dashboard et addProducts / Ne s'ouvre que si loggedIn = 1 token stocké dans cookies = régler pour s'expirer après 1h
 app.get('/dashboard', verifyUser, (req, res) => {
-  res.json("Success", )
+  res.json("Success")
+})
+
+app.get('/toaddproducts', verifyUser, (req, res) => {
+  res.json("success")
 })
 
 

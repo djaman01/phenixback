@@ -175,20 +175,20 @@ app.post('/register', (req, res) => {
     .catch(err => res.json(err))
 })
 
-// API= Router login page
+// API= Router login page et création token
 
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
   userModel.findOne({email: email})
-  .then ( user => { //Si email est trouvé vérifie le password
+  .then ( user => { //Si email est trouvé, vérifie le password
     if(user) {
       bcrypt.compare(password, user.password, (err, response) => {
         //Si response= password bon = genere 1 token avec module stored dans variable jwt / Si password mauvais répondre par 'The password is incorrect"
         if(response) {
             const token = jwt.sign({email: user.email, role: user.role},
                   "jwt-secret-key", {expiresIn: "1h"})//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
-                  res.cookie('token', token)//2 suite) pour store le token dans le cookie res.cookie('name', value)
+                  res.cookie('token', token)//2 suite) pour store le token dans le cookie res.cookie('nameOfToken', value)
                   return res.json({Status: "Success", role: user.role})
         }
         else { //si password faux, répond:
@@ -235,6 +235,13 @@ app.get('/dashboard', verifyUser, (req, res) => {
 
 app.get('/addProduct', verifyUser, (req, res) => {
   res.json("Success")
+})
+
+//Creating the LOGOUT API
+
+app.get('/logout', (req, res) => {
+  res.clearCookie('token'); //Car j'ai appelé mon token 'token' précédemment
+  return res.json({status:"Success"})// Return the message "success" if the token is cleared / Permettra de faire la if condition dans le front pour reload the page when logged out
 })
 
 //Route Handler to GET all products que j'utilise dans la catégorie Achat et aussi pour display les added products

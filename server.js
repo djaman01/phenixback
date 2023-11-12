@@ -187,7 +187,7 @@ app.post('/login', (req, res) => {
         //Si response= password bon = genere 1 token avec module stored dans variable jwt / Si password mauvais répondre par 'The password is incorrect"
         if(response) {
             const token = jwt.sign({email: user.email, role: user.role},
-                  "jwt-secret-key", {expiresIn: "1h"})//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
+                  "jwt-secret-key", {expiresIn: "1d"})//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
                   res.cookie('token', token)//2 suite) pour store le token dans le cookie res.cookie('nameOfToken', value)
                   return res.json({Status: "Success", role: user.role})
         }

@@ -14,7 +14,7 @@ const fs = require('fs');
 
 
 //Imports for the login page
-const bcrypt = require('bcrypt')
+const bcrypt = require('bcrypt') //pour pouvoir utiliser le framework bcrypt, et chiffrer les motdepasse entrés par les users
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 
@@ -165,10 +165,10 @@ app.get("/log", async (req, res) => {
 //API = Route handler for LOGIN Registration
 
 app.post('/register', (req, res) => {
-  const { name, email, password } = req.body;//destructure pour donner value properties objet à ces 3 noms
+  const { email, password } = req.body;//On récupère les states variables crées à partir du browser pour pouvoir les utiliser
   bcrypt.hash(password, 10)//Pour Cacher les values contenu dans password // 10 = facteur de cout qui va hash plsr fois le password pr sécurité
     .then(hash => {
-      userModel.create({ name, email, password: hash }) //password va etre caché
+      userModel.create({ email, password: hash }) //password va etre caché
         .then(user => res.json("Success"))
         .catch(err => res.json(err))
     })
@@ -226,7 +226,7 @@ const verifyUser = (req, res, next) => {
   }
 }
 
-//2 Protected Routes pour accéder à les pages avec routes /dashboard et /addProduct 
+//2 Protected Routes pour accéder aux pages avec routes /dashboard et /addProduct 
 //Ne s'ouvre que si loggedIn et donc = 1 token stocké dans cookies (régler pour s'expirer après 1h de connexion)
 
 app.get('/dashboard', verifyUser, (req, res) => {
@@ -271,11 +271,11 @@ app.get('/bijou', async (req, res) => {
 });
 
 
-//Route Handler to GET only the products with type:"Tableau"
+//API: Route Handler to GET only the products with type:"Tableau"
 app.get('/tableau', async (req, res) => {
   try {
-    // Use Mongoose to query for "bijoux" products
-    const tableauProducts = await postProducts.find({ type: 'Tableau' });//postProducts.find({ type: 'Bijoux' })= ramène que les objets de postProducts model, avec type:"bijoux"
+    // Use Mongoose to query for "tableau" products
+    const tableauProducts = await postProducts.find({ type: 'Tableau' });//postProducts.find({ type: 'Tableau' })= ramène que les objets de postProducts model, avec type:"Tableau"
 
     // Return the matching products as a JSON response
     res.json(tableauProducts);
@@ -333,14 +333,14 @@ app.get('/article/:productId', async (req, res) => {
 //Handles the Put Request
 app.put('/products/:productId', async (req, res) => {
   try {
-    const productId = req.params.productId; // Get the product ID from the URL parameter
-    const updatedProductData = req.body; // Get the updated product data from the request body qu'on va utiliser dans findByIdAndUpdate() mongoose method pour changer la value du produit
+    const productId = req.params.productId; // Get the product ID from the URL parameter 
+    const updatedProductData = req.body; // Get the updateProductData state variable values from the body = prix and code values
 
     // Here we update the document in the MongoDB database using the findByIdAndUpdate() Mongoose method
     //productId= Find the specific document we want to update / updateProducteData= la new data ecrite dans le browser / { new: true }: tells Mongoose to return the UPDATED document after the update operation.
     const updatedProduct = await postProducts.findByIdAndUpdate(productId, updatedProductData, { new: true });
     if (updatedProduct) {
-      res.json(updatedProduct);
+      res.json(updatedProduct); //Si mis à jour réussie: renvoie le produit mis à jour en tant que réponse
     } else {
       res.status(404).json({ error: 'Product not found' });
     }
@@ -353,7 +353,7 @@ app.put('/products/:productId', async (req, res) => {
 app.delete('/products/:productId', async (req, res) => {
   try {
     const productId = req.params.productId;
-    const deletedProduct = await postProducts.findByIdAndRemove(productId);
+    const deletedProduct = await postProducts.findByIdAndRemove(productId); //Là ça le supprime de la base de donnée et non aps que de la state qui le contient comme sur instagram
 
     if (deletedProduct) {
       res.json({ message: 'Product deleted successfully', deletedProduct });
@@ -404,6 +404,6 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 //Starting the Server:
 //This code starts the Express server and listens on the specified port (3005 in this case). 
 app.listen(port, () => {
-  console.log(`Example app listening ${port}`)
+  console.log(`App listening on port ${port}`)
 })
 

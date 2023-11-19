@@ -58,10 +58,9 @@ const login = mongoose.Schema({
 const saveLogin = mongoose.model("log", login);
 
 
-//Modèle for newlogin
+//Modèle for register et newlogin
 
 const userSchema = mongoose.Schema({
-    name: "String",
     email: "String",
     password: "String",
     role: {

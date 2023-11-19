@@ -72,7 +72,7 @@ app.get('/', (req, res) => {
 
 
 //Handling POST Request received by the server from the contact form in the browser, to send it's data to the MongoDb database and to my e-mail
-app.post('/', async (req, res) => {
+app.post('/contact', async (req, res) => {
   const { Nom, Prenom, Ville, Mail, Telephone, Aide, News } = req.body //On DESTRUCTURE les property des objets, dont les values sont stocké dans les noms maintenant
 
   const mailOptions = { //On veut aussi envoyer le tout à phenix.deals@gmail.com
@@ -115,7 +115,7 @@ const upload = multer({ storage: storage }); //Pour gérer les fichier télécha
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
     // Access the uploaded file path
-    const imageUrl = req.file.path.replace(/\\/g, '/');
+    const imageUrl = req.file.path.replace(/\\/g, '/'); //req.file car c'est l'image est un file
 
     // Extract product data by destructuring the object from the request body
     const { type, auteur, infoProduit, etat, prix, code } = req.body;
@@ -138,7 +138,7 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     res.json({ imageUrl })
   } catch (error) {
     console.error('Error handling image upload and product data storage:', error);
-    res.status(500).json({ error: 'Unable to upload image and store product data' });
+    res.status(500).json({ error: error.message });
   }
 });
 
@@ -186,10 +186,9 @@ app.post('/login', (req, res) => {
       bcrypt.compare(password, user.password, (err, response) => {
         //Si response= password bon = genere 1 token avec module stored dans variable jwt / Si password mauvais répondre par 'The password is incorrect"
         if(response) {
-            const token = jwt.sign({email: user.email, role: user.role},
-                  "jwt-secret-key", {expiresIn: "1d"})//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
-                  res.cookie('token', token)//2 suite) pour store le token dans le cookie res.cookie('nameOfToken', value)
-                  return res.json({Status: "Success", role: user.role})
+            const token = jwt.sign({email: user.email, role: user.role}, "jwt-secret-key", {expiresIn: "1d"})//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
+                  res.cookie('token', token)//Pour store le token dans le cookie res.cookie('nameOfToken', value)
+                  return res.json({Status: "Success", role: user.role})//Montre dans la console status:success et role: admin si admin connecté
         }
         else { //si password faux, répond:
           return res.json("Password incorrect")
@@ -206,7 +205,7 @@ app.post('/login', (req, res) => {
 
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token; //c'est le token qu'on a stocké dans le cookie
-  if(!token) { //si on ne trouve pas de
+  if(!token) { //si on ne trouve pas de token
     return res.json("Token is missing")
   }
   else { //si le token est présent, on vérifie s'il est Bon/validé ou pas

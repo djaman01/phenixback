@@ -73,13 +73,13 @@ app.get('/', (req, res) => {
 
 //Handling POST Request received by the server from the contact form in the browser, to send it's data to the MongoDb database and to my e-mail
 app.post('/contact', async (req, res) => {
-  const { Nom, Prenom, Ville, Mail, Telephone, Aide, News } = req.body //On DESTRUCTURE les property des objets, dont les values sont stocké dans les noms maintenant
+  const { Nom, Prenom, Ville, Mail, Telephone, Aide, News } = req.body //On DESTRUCTURE les property des objets y assigner les values et y accéder facilement
 
   const mailOptions = { //On veut aussi envoyer le tout à phenix.deals@gmail.com
     from: "phenix.deals@gmail.com",
     to: "phenix.deals@gmail.com",
     subject: "Contact Form phenixdeals.com",
-    text: `Nom: ${Nom} \n Prenom: ${Prenom}\n Ville: ${Ville}\n Mail: ${Mail}\n Telephone: ${Telephone}\n Aide: ${Aide}\n News: ${Prenom}`
+    text: `Nom: ${Nom} \n Prenom: ${Prenom}\n Ville: ${Ville}\n Mail: ${Mail}\n Telephone: ${Telephone}\n Aide: ${Aide}`
   }
   try {
     transporter.sendMail(mailOptions, function (error, info) {
@@ -226,7 +226,7 @@ const verifyUser = (req, res, next) => {
 }
 
 //2 Protected Routes pour accéder aux pages avec routes /dashboard et /addProduct 
-//Ne s'ouvre que si loggedIn et donc = 1 token stocké dans cookies (régler pour s'expirer après 1h de connexion)
+//Ne s'ouvre que si loggedIn avec role = Admin et donc = 1 token stocké dans cookies (régler pour s'expirer après 1j de connexion)
 
 app.get('/dashboard', verifyUser, (req, res) => {
   res.json("Success")
@@ -314,8 +314,8 @@ app.get('/livre', async (req, res) => {
 //Route Handler to GET only 1 product info when clicked so with: _id because it's unique
 app.get('/article/:productId', async (req, res) => {
   try {
-    const productId = req.params.productId; //on utilise le endpoint de l'url grace a .params et on stock dans la variable productId
-    const product = await postProducts.findById(productId); //On utilise la methode .findById() pour trouver 1 produit
+    const productId = req.params.productId; //on sort le parametre productId et on le store dans une variable pour pouvoir l'utiliser, car = row._id et donc identifie le produit
+    const product = await postProducts.findById(productId); //On utilise la methode .findById() pour trouver 1 produit avec cette id qu'on a récupérer
 
     if (product) {
       res.json(product);

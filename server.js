@@ -112,6 +112,7 @@ const upload = multer({ storage: storage }); //Pour gérer les fichier télécha
 
 
 //Handling POST Request received by the server from the addProduct form in the browser, to send it's data (image+infos) to the MongoDb database
+//upload.multiple pour stocker plusieurs images
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
     // Access the uploaded file path
@@ -352,7 +353,7 @@ app.put('/products/:productId', async (req, res) => {
 app.delete('/products/:productId', async (req, res) => {
   try {
     const productId = req.params.productId;
-    const deletedProduct = await postProducts.findByIdAndRemove(productId); //Là ça le supprime de la base de donnée et non aps que de la state qui le contient comme sur instagram
+    const deletedProduct = await postProducts.findByIdAndRemove(productId); //Là ça supprime le produit de la base de donnée PUIS passe à la suite (await)
 
     if (deletedProduct) {
       res.json({ message: 'Product deleted successfully', deletedProduct });

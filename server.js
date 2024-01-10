@@ -18,7 +18,7 @@ const bcrypt = require('bcrypt') //pour pouvoir utiliser le framework bcrypt, et
 const jwt = require('jsonwebtoken')
 const cookieParser = require('cookie-parser')
 
-const app = express() //It creates an Express application instance called app, tu easily create API
+const app = express() //It creates an Express application instance called app, to easily create API
 
 app.use(express.json());//To convert=parse incoming JSON data from HTTP requests, to Json Objects easier to read for the server
 
@@ -73,7 +73,7 @@ app.get('/', (req, res) => {
 
 //Handling POST Request received by the server from the contact form in the browser, to send it's data to the MongoDb database and to my e-mail
 app.post('/contact', async (req, res) => {
-  const { Nom, Prenom, Ville, Mail, Telephone, Aide, News } = req.body //On DESTRUCTURE les property des objets y assigner les values et y accéder facilement
+  const { Nom, Prenom, Ville, Mail, Telephone, Aide, News } = req.body //On DESTRUCTURE les property des objets pour y assigner les values et y accéder facilement
 
   const mailOptions = { //On veut aussi envoyer le tout à phenix.deals@gmail.com
     from: "phenix.deals@gmail.com",
@@ -91,7 +91,8 @@ app.post('/contact', async (req, res) => {
     });
     const newPost = await post.create({ Nom, Prenom, Ville, Mail, Telephone, Aide, News }); //It attempts to create a new document (record) in the MongoDB collection using the postModel.create() method. 
     res.json(newPost)//If the document is successfully created, it responds with the newly created document in JSON format.
-  } catch (error) {
+  } 
+  catch (error) {
     res.status(500).send(error)
   }
 
@@ -137,7 +138,8 @@ app.post('/upload', upload.single('file'), async (req, res) => {
     // Respond with a success message or the newly created product
     // res.json({ message: 'Image uploaded and product data stored successfully', product: newProduct });
     res.json({ imageUrl })
-  } catch (error) {
+  }
+   catch (error) {
     console.error('Error handling image upload and product data storage:', error);
     res.status(500).json({ error: error.message });
   }

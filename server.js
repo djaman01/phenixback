@@ -116,28 +116,13 @@ const upload = multer({ storage: storage }); //Pour gérer les fichier télécha
 //upload.multiple pour stocker plusieurs images
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
-    // Access the uploaded file path
-    const imageUrl = req.file.path.replace(/\\/g, '/'); //req.file car c'est l'image est un file
+   
+    const imageUrl = req.file.path.replace(/\\/g, '/'); // Pour accéder au path de l'image envoyer et store dans database
 
-    // Extract product data by destructuring the object from the request body
-    const { type, auteur, infoProduit, etat, prix, code } = req.body;
+    const { type, auteur, infoProduit, etat, prix, code } = req.body; //Destructuring so name data property = value
 
-    // Create a new product using the Mongoose model and include the image URL
-    const newProduct = new postProducts({
-      type,
-      auteur,
-      imageUrl, // Include the image URL
-      infoProduit, 
-      etat,
-      prix,
-      code,
-    });
-
-    // Save the product to the database
-    await newProduct.save();
-    // Respond with a success message or the newly created product
-    // res.json({ message: 'Image uploaded and product data stored successfully', product: newProduct });
-    res.json({ imageUrl })
+    const newProduct = await postProducts.create({type, auteur, infoProduit, etat, prix, code, imageUrl})
+    res.json({ newProduct }) //Facultatif: Si document est bien crée, l'envoie à la console du browser en format json
   }
    catch (error) {
     console.error('Error handling image upload and product data storage:', error);

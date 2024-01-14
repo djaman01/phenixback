@@ -24,12 +24,20 @@ app.use(express.json());//To convert=parse incoming JSON data from HTTP requests
 
 //Objectif: 1) Store le token dans le cookie en front-end side (on l'active grace à une ligne de code dans le component login.js)
 app.use(cors({
-  origin: ["https://phenixdeals.onrender.com/"],//Local Host: to access the front-end side through this URL
+  origin: ["https://phenixdeals.onrender.com"],//Local Host: to access the front-end side through this URL
   methods: ["GET", "POST", "PUT", "DELETE"],//
   credentials: true
 }))
 
-app.use(cors());
+
+// Enable CORS for all routes
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'https://phenixdeals.onrender.com'); // Replace '*' with the specific origin of your front-end
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  next();
+});
+
 //To access API inside our front-end
 //2eme partie pour store cookie: res.cookie dans app.post('/register')
 
@@ -69,7 +77,6 @@ const transporter = nodemailer.createTransport({ //Utilisation nodemailer
 
 //This code defines an HTTP GET route for the root URL ("/"). When a client accesses this URL, it sends a simple "Hello World!" message as a response.
 app.get('/', (req, res) => {
-  res.setHeader("Access-Control-Allow-Credentials", "true");
   res.send('Hello World!')
 })
 

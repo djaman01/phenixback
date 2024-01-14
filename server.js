@@ -30,14 +30,6 @@ app.use(cors({
 }))
 
 
-// Enable CORS for all routes
-app.use((req, res, next) => {
-  res.setHeader('Access-Control-Allow-Origin', 'https://phenixdeals.onrender.com'); // Replace '*' with the specific origin of your front-end
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
-  next();
-});
-
 //To access API inside our front-end
 //2eme partie pour store cookie: res.cookie dans app.post('/register')
 
@@ -208,12 +200,12 @@ const verifyUser = (req, res, next) => {
 //Ne s'ouvre que si loggedIn avec role = Admin et donc = 1 token stocké dans cookies (régler pour s'expirer après 1j de connexion)
 
 app.get('/dashboard', verifyUser, (req, res) => {
-  res.json("Success")
-})
+  res.status(200).json({ message: 'Success' });
+});
 
 app.get('/addProduct', verifyUser, (req, res) => {
-  res.json("Success")
-})
+  res.status(200).json({ message: 'Success' });
+});
 
 //Creating the LOGOUT API
 

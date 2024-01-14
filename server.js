@@ -157,6 +157,7 @@ app.post('/newlogin', (req, res) => {
         bcrypt.compare(password, user.password, (err, response) => {
           //Si response= password bon = genere 1 token avec module stored dans variable jwt / Si password mauvais répondre par 'The password is incorrect"
           if (response) {
+            console.log('Token created successfully');
             const token = jwt.sign({ email: user.email, role: user.role }, "jwt-secret-key", { expiresIn: "1d" })//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
             res.cookie('token', token)//Pour store le token dans le cookie res.cookie('nameOfToken', value)
             return res.json({ Status: "Success", role: user.role })//Montre dans la console status:success et role: admin si admin connecté
@@ -176,6 +177,7 @@ app.post('/newlogin', (req, res) => {
 
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token; //c'est le token qu'on a stocké dans le cookie
+  console.log('Verifying token:', token);
   if (!token) { //si on ne trouve pas de token
     return res.json("Token is missing")
   }

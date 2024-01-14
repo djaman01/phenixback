@@ -23,11 +23,15 @@ const app = express() //It creates an Express application instance called app, t
 app.use(express.json());//To convert=parse incoming JSON data from HTTP requests, to Json Objects easier to read for the server
 
 //Objectif: 1) Store le token dans le cookie en front-end side (on l'active grace à une ligne de code dans le component login.js)
-app.use(cors({
-  origin: ["https://phenixdeals.onrender.com"],//Local Host: to access the front-end side through this URL
-  methods: ["GET", "POST", "PUT", "DELETE"],//
-  credentials: true
-}))
+app.use(
+  cors({
+    origin: ['https://phenixdeals.onrender.com'], // Local Host: to access the front-end side through this URL
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept', 'Origin'], // Add any additional headers if needed
+    credentials: true,
+  })
+);
+
 //To access API inside our front-end
 //2eme partie pour store cookie: res.cookie dans app.post('/register')
 
@@ -175,8 +179,6 @@ app.post('/login', (req, res) => {
           //Si response= password bon = genere 1 token avec module stored dans variable jwt / Si password mauvais répondre par 'The password is incorrect"
           if (response) {
             const token = jwt.sign({ email: user.email, role: user.role }, "jwt-secret-key", { expiresIn: "1d" })//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
-            res.header('Access-Control-Allow-Credentials', 'true');
-            res.header('Access-Control-Allow-Origin', 'https://phenixdeals.onrender.com');
             res.cookie('token', token)//Pour store le token dans le cookie res.cookie('nameOfToken', value)
             return res.json({ Status: "Success", role: user.role })//Montre dans la console status:success et role: admin si admin connecté
           }

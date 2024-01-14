@@ -176,6 +176,7 @@ app.post('/login', (req, res) => {
           if (response) {
             const token = jwt.sign({ email: user.email, role: user.role }, "jwt-secret-key", { expiresIn: "1d" })//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
             res.header('Access-Control-Allow-Credentials', 'true');
+            res.header('Access-Control-Allow-Origin', 'https://phenixdeals.onrender.com');
             res.cookie('token', token)//Pour store le token dans le cookie res.cookie('nameOfToken', value)
             return res.json({ Status: "Success", role: user.role })//Montre dans la console status:success et role: admin si admin connecté
           }

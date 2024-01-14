@@ -28,6 +28,8 @@ app.use(cors({
   methods: ["GET", "POST", "PUT", "DELETE"],//
   credentials: true
 }))
+
+app.use(cors());
 //To access API inside our front-end
 //2eme partie pour store cookie: res.cookie dans app.post('/register')
 
@@ -67,6 +69,7 @@ const transporter = nodemailer.createTransport({ //Utilisation nodemailer
 
 //This code defines an HTTP GET route for the root URL ("/"). When a client accesses this URL, it sends a simple "Hello World!" message as a response.
 app.get('/', (req, res) => {
+  res.setHeader("Access-Control-Allow-Credentials", "true");
   res.send('Hello World!')
 })
 
@@ -91,7 +94,7 @@ app.post('/contact', async (req, res) => {
     });
     const newPost = await post.create({ Nom, Prenom, Ville, Mail, Telephone, Aide, News }); //It attempts to create a new document (record) in the MongoDB collection using the postModel.create() method. 
     res.json(newPost)//If the document is successfully created, it responds with the newly created document in JSON format.
-  } 
+  }
   catch (error) {
     res.status(500).send(error)
   }
@@ -116,15 +119,15 @@ const upload = multer({ storage: storage }); //Pour gérer les fichier télécha
 //upload.multiple pour stocker plusieurs images
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
-   
+
     const imageUrl = req.file.path.replace(/\\/g, '/'); // Pour accéder au path de l'image envoyer et store dans database
 
     const { type, auteur, infoProduit, etat, prix, code } = req.body; //Destructuring so name data property = value
 
-    const newProduct = await postProducts.create({type, auteur, infoProduit, etat, prix, code, imageUrl})
+    const newProduct = await postProducts.create({ type, auteur, infoProduit, etat, prix, code, imageUrl })
     res.json({ newProduct }) //Facultatif: Si document est bien crée, l'envoie à la console du browser en format json
   }
-   catch (error) {
+  catch (error) {
     console.error('Error handling image upload and product data storage:', error);
     res.status(500).json({ error: error.message });
   }
@@ -168,42 +171,42 @@ app.post('/register', (req, res) => {
 app.post('/login', (req, res) => {
   const { email, password } = req.body;
 
-  userModel.findOne({email: email})
-  .then ( user => { //Si email est trouvé, vérifie le password
-    if(user) {
-      bcrypt.compare(password, user.password, (err, response) => {
-        //Si response= password bon = genere 1 token avec module stored dans variable jwt / Si password mauvais répondre par 'The password is incorrect"
-        if(response) {
-            const token = jwt.sign({email: user.email, role: user.role}, "jwt-secret-key", {expiresIn: "1d"})//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
-                  res.cookie('token', token)//Pour store le token dans le cookie res.cookie('nameOfToken', value)
-                  return res.json({Status: "Success", role: user.role})//Montre dans la console status:success et role: admin si admin connecté
-        }
-        else { //si password faux, répond:
-          return res.json("Password incorrect")
-        }
-      })
-    }
-    else {
-      return res.json("email not found")
-    }
-  })
+  userModel.findOne({ email: email })
+    .then(user => { //Si email est trouvé, vérifie le password
+      if (user) {
+        bcrypt.compare(password, user.password, (err, response) => {
+          //Si response= password bon = genere 1 token avec module stored dans variable jwt / Si password mauvais répondre par 'The password is incorrect"
+          if (response) {
+            const token = jwt.sign({ email: user.email, role: user.role }, "jwt-secret-key", { expiresIn: "1d" })//sign(payload: JSON qui contient infos à transmettre /Secret key: doit avoir au moins 32 characteres / jours avant expiration: facultatif)
+            res.cookie('token', token)//Pour store le token dans le cookie res.cookie('nameOfToken', value)
+            return res.json({ Status: "Success", role: user.role })//Montre dans la console status:success et role: admin si admin connecté
+          }
+          else { //si password faux, répond:
+            return res.json("Password incorrect")
+          }
+        })
+      }
+      else {
+        return res.json("email not found")
+      }
+    })
 })
 
 //middleware to verify the token et crée une protected route pour accéder au Dashboard = plus de sécurité avant la réponse
 
 const verifyUser = (req, res, next) => {
   const token = req.cookies.token; //c'est le token qu'on a stocké dans le cookie
-  if(!token) { //si on ne trouve pas de token
+  if (!token) { //si on ne trouve pas de token
     return res.json("Token is missing")
   }
   else { //si le token est présent, on vérifie s'il est Bon/validé ou pas
     jwt.verify(token, 'jwt-secret-key', (err, decoded) => { //decoded = value de jwt.sign qui constitue les données du token (ici c'est email and role)
-      if(err) {
-        return res.json ("Error with token")
+      if (err) {
+        return res.json("Error with token")
       }
       else { //Si pas d'erreur avec le token
-        if(decoded.role === "admin") {
-              next() //Active la middleware et autorise la poursuite de la requete pour avoir une réponse
+        if (decoded.role === "admin") {
+          next() //Active la middleware et autorise la poursuite de la requete pour avoir une réponse
         }
         else {
           return res.json("not admin")
@@ -228,7 +231,7 @@ app.get('/addProduct', verifyUser, (req, res) => {
 
 app.get('/logout', (req, res) => {
   res.clearCookie('token'); //Car j'ai appelé mon token 'token' précédemment
-  return res.json({status:"Success"})// Return the message "success" if the token is cleared / Permettra de faire la if condition dans le front pour reload the page when logged out
+  return res.json({ status: "Success" })// Return the message "success" if the token is cleared / Permettra de faire la if condition dans le front pour reload the page when logged out
 })
 
 //Route Handler to GET all products que j'utilise dans la catégorie Achat et aussi pour display les added products

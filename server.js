@@ -140,25 +140,6 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-//1er login 
-app.get("/log", async (req, res) => {
-  try {
-    const { user, password } = req.body;
-    // Create a new login document using the saveLogin model
-    const newLogin = new saveLogin({
-      user,
-      password,
-    })
-
-    // Save the new login document to the database
-    const savedLogin = await newLogin.save();
-
-    res.status(201).json(savedLogin);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating login entry" });
-  }
-});
 
 //API = Route handler for LOGIN Registration
 
@@ -175,7 +156,7 @@ app.post('/register', (req, res) => {
 
 // API= Router login page et création token
 
-app.post('/login', (req, res) => {
+app.post('/newlogin', (req, res) => {
   const { email, password } = req.body;
 
   userModel.findOne({ email: email })

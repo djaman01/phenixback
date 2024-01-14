@@ -169,7 +169,7 @@ app.post('/register', (req, res) => {
 
 // API= Router login page et création token
 
-app.post('/login', (req, res) => {
+app.post('/newlogin', (req, res) => {
   const { email, password } = req.body;
 
   userModel.findOne({ email: email })

@@ -24,7 +24,7 @@ app.use(express.json());//To convert=parse incoming JSON data from HTTP requests
 
 //Objectif: 1) Store le token dans le cookie en front-end side (on l'active grace à une ligne de code dans le component login.js)
 app.use(cors({
-  origin: ["http://localhost:3000"],//Local Host: to access the front-end side through this URL
+  origin: ["https://phenixback.onrender.com/"],//Local Host: to access the front-end side through this URL
   methods: ["GET", "POST", "PUT", "DELETE"],//
   credentials: true
 }))

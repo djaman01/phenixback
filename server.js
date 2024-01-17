@@ -23,15 +23,15 @@ const app = express() //It creates an Express application instance called app, t
 app.use(express.json());//To convert=parse incoming JSON data from HTTP requests, to Json Objects easier to read for the server
 
 //Objectif: 1) Store le token dans le cookie en front-end side (on l'active grace à une ligne de code dans le component login.js)
-app.use(cors({
-  origin: ["https://phenixdeals.vercel.app", "https://phenixdeals.vercel.app/"],//Local Host: to access the front-end side through this URL
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],//
-  credentials: true
-}))
-//To access API inside our front-end
-//2eme partie pour store cookie: res.cookie dans app.post('/register')
+const corsOptions = {
+  origin: ["https://phenixdeals.vercel.app"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  credentials: true,
+};
 
+app.use(cors(corsOptions));
 app.use(cookieParser());
+
 
 //------------------------------------------------------
 
@@ -130,25 +130,6 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-//1er login 
-app.get("/log", async (req, res) => {
-  try {
-    const { user, password } = req.body;
-    // Create a new login document using the saveLogin model
-    const newLogin = new saveLogin({
-      user,
-      password,
-    })
-
-    // Save the new login document to the database
-    const savedLogin = await newLogin.save();
-
-    res.status(201).json(savedLogin);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating login entry" });
-  }
-});
 
 //API = Route handler for LOGIN Registration
 

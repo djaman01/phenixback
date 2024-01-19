@@ -116,8 +116,8 @@ const upload = multer({ storage: storage }); //Pour gérer les fichier télécha
 //upload.multiple pour stocker plusieurs images
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
-
-    const imageUrl = path.join('uploads', req.file.filename);
+    
+    const imageUrl = req.file.path.replace(/\\/g, '/'); // Pour accéder au path de l'image envoyer et store dans database
 
     const { type, auteur, infoProduit, etat, prix, code } = req.body; //Destructuring so name data property = value
 

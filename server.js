@@ -117,7 +117,7 @@ const upload = multer({ storage: storage }); //Pour gérer les fichier télécha
 app.post('/upload', upload.single('file'), async (req, res) => {
   try {
 
-    const imageUrl = req.file.path.replace(/\\/g, '/'); // Pour accéder au path de l'image envoyer et store dans database
+    const imageUrl = path.join('uploads', req.file.filename);
 
     const { type, auteur, infoProduit, etat, prix, code } = req.body; //Destructuring so name data property = value
 
@@ -130,25 +130,6 @@ app.post('/upload', upload.single('file'), async (req, res) => {
   }
 });
 
-//1er login 
-app.get("/log", async (req, res) => {
-  try {
-    const { user, password } = req.body;
-    // Create a new login document using the saveLogin model
-    const newLogin = new saveLogin({
-      user,
-      password,
-    })
-
-    // Save the new login document to the database
-    const savedLogin = await newLogin.save();
-
-    res.status(201).json(savedLogin);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Error creating login entry" });
-  }
-});
 
 //API = Route handler for LOGIN Registration
 
